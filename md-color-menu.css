@@ -1,0 +1,18 @@
+md-menu-content.md-cm {
+    padding: 0;
+    max-height: none;
+    overflow: visible;
+}
+
+md-menu-content.md-cm .md-cm-swatches {
+    cursor: pointer;
+}
+
+md-menu-content.md-cm .md-cm-color {
+    width: 32px;
+    min-height: 32px;
+}
+
+md-menu-content.md-cm .md-cm-color:focus {
+    outline: none;
+}
