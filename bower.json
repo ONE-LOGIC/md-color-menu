@@ -1,0 +1,26 @@
+{
+  "name": "md-color-menu",
+  "authors": [
+    "Sebastian Henneberg <sebastian.henneberg@onelogic.de>"
+  ],
+  "description": "Simple Angular Material Color Picker",
+  "main": [
+    "md-color-menu.js",
+    "md-color-menu.css"
+  ],
+  "moduleType": [],
+  "keywords": [
+    "AngularJS",
+    "Material Design",
+    "Color Picker"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/ONE-LOGIC/mdColorMenu",
+  "ignore": [
+    "bower_components"
+  ],
+  "dependencies": {
+    "angular": "~1.4.8",
+    "angular-material": "~1.0.0-rc4"
+  }
+}
