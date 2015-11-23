@@ -11,7 +11,7 @@
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
       angular.forEach(swatch, function(color, colorName) {
-        if (excludeAccentColors(colorName))
+        if (isAccentColors(colorName) || isBlack(colorName))
           return;
         var foregroundColor = list2rgbString(color.contrast);
         var backgroundColor = list2rgbString(color.value);
@@ -23,8 +23,12 @@
 
     return colors;
 
-    function excludeAccentColors(colorName) {
-      return colorName[0] === 'A' || colorName === '1000';
+    function isAccentColors(colorName) {
+      return colorName[0] === 'A';
+    }
+
+    function isBlack(colorName) {
+      return colorName === '1000';
     }
 
     function list2rgbString(rgbList) {
