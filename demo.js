@@ -11,7 +11,7 @@
   }
 
   function DemoController(mdPickerColors) {
-    this.color = mdPickerColors[0][7];
+    this.color = mdPickerColors.getColor('#D32F2F');
   }
 
 })();

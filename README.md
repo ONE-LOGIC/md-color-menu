@@ -29,7 +29,7 @@ Define a color on your $scope:
 angular
   .module('myApp')
   .controller('Controller', function ($scope, mdPickerColors) {
-    $scope.color = mdPickerColors[0][7]; // pick red as default color
+    $scope.color = mdPickerColors.getColor('#D32F2F'); // pick red as default color
   });
 ```
 

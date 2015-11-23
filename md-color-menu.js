@@ -6,7 +6,12 @@
     .directive('mdColorMenu', mdColorMenuDirective);
 
   function mdPickerColors($mdColorPalette) {
-    var colors = [];
+    var service = {
+      colors: [],
+      getColor: getColor
+    };
+
+    var hexToColor = {};
 
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
@@ -17,12 +22,18 @@
         var backgroundColor = listToRgbString(color.value);
         var name = swatchName + ' ' + colorName;
         var hex = listToHexString(color.value);
-        swatchColors.push({name: name, hex: hex, style: {'color': foregroundColor, 'background-color': backgroundColor}});
+        var colorObject = {name: name, hex: hex, style: {'color': foregroundColor, 'background-color': backgroundColor}};
+        swatchColors.push(colorObject);
+        hexToColor[hex] = colorObject;
       });
-      colors.push(swatchColors);
+      service.colors.push(swatchColors);
     });
 
-    return colors;
+    return service;
+
+    function getColor(hex) {
+      return hexToColor[hex.toLowerCase()];
+    }
 
     function isAccentColors(colorName) {
       return colorName[0] === 'A';
@@ -81,7 +92,7 @@
     var vm = this;
 
     vm.openMenu = openMenu;
-    vm.colors = mdPickerColors;
+    vm.colors = mdPickerColors.colors;
     vm.selectColor = selectColor;
 
     function openMenu($mdOpenMenu, $event) {
