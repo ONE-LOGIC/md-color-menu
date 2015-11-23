@@ -75,8 +75,8 @@
     vm.colors = mdPickerColors;
     vm.selectColor = selectColor;
 
-    function openMenu($mdOpenMenu, event) {
-      $mdOpenMenu(event);
+    function openMenu($mdOpenMenu, $event) {
+      $mdOpenMenu($event);
     }
 
     function selectColor(color) {
