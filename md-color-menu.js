@@ -39,12 +39,12 @@
     return {
       restrict: 'E',
       transclude: true,
-      scope: {
-        color: '='
-      },
+      scope: {},
       controller: mdColorMenuController,
       controllerAs: 'vm',
-      bindToController: true,
+      bindToController: {
+        color: '='
+      },
       template: [
         '<md-menu md-position-mode="target-right target">',
         '  <div ng-click="vm.openMenu($mdOpenMenu, $event)" ng-transclude=""></div>',
