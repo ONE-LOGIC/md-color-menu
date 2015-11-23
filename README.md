@@ -1,4 +1,4 @@
-# mdColorMenu (Angular Material Color Picker) [![Bower version](https://badge.fury.io/bo/md-color-menu.svg)](https://github.com/ONE-LOGIC/mdColorMenu) 
+# mdColorMenu (Angular Material Color Picker) [![Bower version](https://img.shields.io/bower/v/md-color-menu.svg)](https://github.com/ONE-LOGIC/mdColorMenu) 
 
 Simple color picker based on Angular Material. Colors are pre-defined by the Material Design Color Palette. Try out the [Demo](http://one-logic.github.io/mdColorMenu).
  
