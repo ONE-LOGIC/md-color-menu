@@ -13,10 +13,11 @@
       angular.forEach(swatch, function(color, colorName) {
         if (isAccentColors(colorName) || isBlack(colorName))
           return;
-        var foregroundColor = list2rgbString(color.contrast);
-        var backgroundColor = list2rgbString(color.value);
+        var foregroundColor = listToRgbString(color.contrast);
+        var backgroundColor = listToRgbString(color.value);
         var name = swatchName + ' ' + colorName;
-        swatchColors.push({name: name, style: {'color': foregroundColor, 'background-color': backgroundColor}});
+        var hex = listToHexString(color.value);
+        swatchColors.push({name: name, hex: hex, style: {'color': foregroundColor, 'background-color': backgroundColor}});
       });
       colors.push(swatchColors);
     });
@@ -31,11 +32,19 @@
       return colorName === '1000';
     }
 
-    function list2rgbString(rgbList) {
+    function listToRgbString(rgbList) {
       if (rgbList.length === 4) {
         return 'rgba(' + rgbList.join(',') + ')';
       }
       return 'rgb(' + rgbList.join(',') + ')';
+    }
+
+    function listToHexString(rgbList) {
+      return '#' + rgbList.map(toHex).join('');
+    }
+
+    function toHex(number) {
+      return number.toString(16);
     }
   }
 
