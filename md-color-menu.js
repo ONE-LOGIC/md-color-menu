@@ -42,21 +42,7 @@
       scope: {
         color: '='
       },
-      controller: function($scope, mdPickerColors) {
-        var vm = this;
-
-        vm.openMenu = openMenu;
-        vm.colors = mdPickerColors;
-        vm.selectColor = selectColor;
-
-        function openMenu($mdOpenMenu, event) {
-          $mdOpenMenu(event);
-        }
-
-        function selectColor(color) {
-          vm.color = color;
-        }
-      },
+      controller: mdColorMenuController,
       controllerAs: 'vm',
       bindToController: true,
       template: [
@@ -76,7 +62,22 @@
         '</md-menu>'
       ].join('')
     }
+  }
 
+  function mdColorMenuController(mdPickerColors) {
+    var vm = this;
+
+    vm.openMenu = openMenu;
+    vm.colors = mdPickerColors;
+    vm.selectColor = selectColor;
+
+    function openMenu($mdOpenMenu, event) {
+      $mdOpenMenu(event);
+    }
+
+    function selectColor(color) {
+      vm.color = color;
+    }
   }
 
 })();
