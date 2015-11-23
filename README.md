@@ -1,6 +1,6 @@
-# mdColorMenu (Angular Material Color Picker) [![Bower version](https://img.shields.io/bower/v/md-color-menu.svg)](https://github.com/ONE-LOGIC/mdColorMenu) 
+# md-color-menu (Angular Material Color Picker) [![Bower version](https://img.shields.io/bower/v/md-color-menu.svg)](https://github.com/ONE-LOGIC/md-color-menu) 
 
-Simple color picker based on Angular Material. Colors are pre-defined by the Material Design Color Palette. Try out the [Demo](http://one-logic.github.io/mdColorMenu).
+Simple color picker based on Angular Material. Colors are pre-defined by the Material Design Color Palette. Try out the [Demo](http://one-logic.github.io/md-color-menu).
  
 ![md-color-menu](demo.gif)
 
@@ -13,8 +13,8 @@ bower install md-color-menu --save
 
 Add exported CSS and Javascript:
 ```html
-<link rel="stylesheet" href="bower_components/mdColorMenu/md-color-menu.css" />
-<script src="bower_components/mdColorMenu/md-color-menu.js"></script>
+<link rel="stylesheet" href="bower_components/md-color-menu/md-color-menu.css" />
+<script src="bower_components/md-color-menu/md-color-menu.js"></script>
 ```
 
 Add the module to your Angular dependencies:
