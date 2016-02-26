@@ -2,7 +2,7 @@
 
   angular
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
-    .factory('mdPickerColors', mdPickerColors)
+    .factory('mdPickerColors', ['$mdColorPalette', mdPickerColors])
     .directive('mdColorMenu', mdColorMenuDirective);
 
   function mdPickerColors($mdColorPalette) {
