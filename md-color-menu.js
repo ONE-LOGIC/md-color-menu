@@ -71,7 +71,8 @@
       controller: mdColorMenuController,
       controllerAs: 'vm',
       bindToController: {
-        color: '='
+        color: '=',
+        showTooltips: '='
       },
       template: [
         '<md-menu md-position-mode="target-right target">',
@@ -82,7 +83,7 @@
         '      <div ng-repeat="swatch in vm.colors" layout=column>',
         '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
         '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
-        '          <md-tooltip>{{color.name}}</md-tooltip>',
+        '          <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
         '        </div>',
         '      </div>',
         '    </div>',
@@ -95,6 +96,7 @@
   function mdColorMenuController(mdPickerColors) {
     var vm = this;
 
+    vm.showTooltips = vm.showTooltips || false;
     vm.openMenu = openMenu;
     vm.colors = mdPickerColors.colors;
     vm.selectColor = selectColor;
