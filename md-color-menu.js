@@ -72,7 +72,7 @@
       controllerAs: 'vm',
       bindToController: {
         color: '=',
-        showTooltips: '='
+        showTooltips: '=?'
       },
       template: [
         '<md-menu md-position-mode="target-right target">',
