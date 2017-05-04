@@ -2,13 +2,14 @@
 
   angular
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
-    .factory('mdPickerColors', ['$mdColorPalette', mdPickerColors])
+    .factory('mdPickerColors', ['$mdColorPalette', '$mdPanel', mdPickerColors])
     .directive('mdColorMenu', mdColorMenuDirective);
 
-  function mdPickerColors($mdColorPalette) {
+  function mdPickerColors($mdColorPalette, $mdPanel) {
     var service = {
       colors: [],
-      getColor: getColor
+      getColor: getColor,
+      openColorPicker: openColorPicker
     };
 
     var hexToColor = {};
@@ -60,6 +61,54 @@
         hex = '0' + hex;
       }
       return hex;
+    }
+
+    function openColorPicker(ev, colorSelectedCallback) {
+
+      var panelRef = { panel: null };
+
+      var position = $mdPanel.newPanelPosition()
+        .relativeTo(ev.srcElement)
+        .addPanelPosition(
+          $mdPanel.xPosition.ALIGN_START,
+          $mdPanel.yPosition.BELOW
+        );
+
+      var config = {
+        attachTo: angular.element(document.body),
+        controller: angular.noop,
+        controllerAs: 'vm',
+        template: [
+          '  <md-menu-content class="md-cm">',
+          '    <div></div>',
+          '    <div class="md-cm-swatches" layout="row">',
+          '      <div ng-repeat="swatch in vm.colors" layout=column>',
+          '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color); vm.panelRef.panel.close();" layout="row" layout-align="center center">',
+          '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
+          '        </div>',
+          '      </div>',
+          '    </div>',
+          '  </md-menu-content>'
+        ].join(''),
+        panelClass: 'md-color-picker-md-panel-class',
+        position: position,
+        locals: {
+          panelRef: panelRef,
+          colors: service.colors,
+          selectColor: colorSelectedCallback
+        },
+        bindToController: true,
+        openFrom: ev,
+        clickOutsideToClose: true,
+        escapeToClose: true,
+        focusOnOpen: true,
+        zIndex: 99,
+        groupName: 'menus'
+      };
+
+      $mdPanel.open(config).then(function(result) {
+        panelRef.panel = result;
+      });
     }
   }
 

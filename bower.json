@@ -1,6 +1,6 @@
 {
   "name": "md-color-menu",
-  "version": "0.1.6",
+  "version": "0.2.0",
   "authors": [
     "Sebastian Henneberg <sebastian.henneberg@onelogic.de>"
   ],
@@ -21,7 +21,7 @@
     "bower_components"
   ],
   "dependencies": {
-    "angular": ">=1.4.0",
-    "angular-material": "~1.0.9"
+    "angular": "^1.6.4",
+    "angular-material": "^1.1.4"
   }
 }
