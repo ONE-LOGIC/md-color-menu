@@ -10,7 +10,7 @@ md-menu-content.md-cm .md-cm-swatches {
 
 md-menu-content.md-cm .md-cm-color {
     width: 32px;
-    min-height: 32px;
+    height: 32px;
 }
 
 md-menu-content.md-cm .md-cm-color:focus {
