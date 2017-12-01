@@ -9,10 +9,13 @@
     var service = {
       colors: [],
       getColor: getColor,
+      setFavorites: setFavorites,
+      getFavorites: getFavorites,
       openColorPicker: openColorPicker
     };
 
     var hexToColor = {};
+    var favorites = [];
 
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
@@ -33,11 +36,50 @@
     return service;
 
     function getColor(hex) {
-      return hexToColor[hex.toLowerCase()];
+      var colorObj = hexToColor[hex.toLowerCase()];
+      if (colorObj === undefined) {
+        colorObj = {
+          name: hex,
+          hex: hex,
+          style: {
+            'color': "rgba(0,0,0,0.87)",
+            'background-color': hexToRgb(hex)
+          }
+        };
+      }
+      return colorObj;
+    }
+
+    function setFavorites(colorArray) {
+      if (!Array.isArray(colorArray) || colorArray.length !== 10) {
+        throw new Error('mdColorPicker:setFavorites: colorArray needs to be an array with 10 colors.');
+      }
+      if (typeof colorArray[0] === 'string' || colorArray[0] instanceof String) {
+        favorites = colorArray.map(function (c) {
+          return getColor(c);
+        });
+      } else {
+        favorites = colorArray;
+      }
+    }
+
+    function getFavorites() {
+      return favorites;
     }
 
     function isAccentColors(colorName) {
       return colorName[0] === 'A';
+    }
+
+    function hexToRgb(hex) {
+      // Expand shorthand form (e.g. "04F") to full form (e.g. "0044FF")
+      var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+      hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+        return r + r + g + g + b + b;
+      });
+
+      var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+      return result ? 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')' : null;
     }
 
     function isBlack(colorName) {
@@ -56,7 +98,7 @@
     }
 
     function toHex(number) {
-      hex = number.toString(16);
+      var hex = number.toString(16);
       if (hex.length < 2) {
         hex = '0' + hex;
       }
@@ -82,6 +124,7 @@
           '  <md-menu-content class="md-cm">',
           '    <div></div>',
           '    <div class="md-cm-swatches" layout="row">',
+          '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
           '      <div ng-repeat="swatch in vm.colors" layout=column>',
           '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color); vm.panelRef.panel.close();" layout="row" layout-align="center center">',
           '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
@@ -95,7 +138,8 @@
         locals: {
           panelRef: panelRef,
           colors: service.colors,
-          selectColor: colorSelectedCallback
+          selectColor: colorSelectedCallback,
+          favorites: favorites
         },
         bindToController: true,
         openFrom: ev,
@@ -129,6 +173,7 @@
         '  <md-menu-content class="md-cm">',
         '    <div></div>',
         '    <div class="md-cm-swatches" layout="row">',
+        '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
         '      <div ng-repeat="swatch in vm.colors" layout=column>',
         '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
         '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
@@ -149,6 +194,7 @@
     vm.openMenu = openMenu;
     vm.colors = mdPickerColors.colors;
     vm.selectColor = selectColor;
+    vm.favorites = mdPickerColors.getFavorites();
 
     function openMenu($mdOpenMenu, $event) {
       $mdOpenMenu($event);

@@ -13,6 +13,10 @@ md-menu-content.md-cm .md-cm-color {
     min-height: 32px;
 }
 
+md-menu-content.md-cm .favorites {
+    border-right: 3px solid #ebebeb;
+}
+
 md-menu-content.md-cm .md-cm-color:focus {
     outline: none;
 }
