@@ -51,9 +51,6 @@
     }
 
     function setFavorites(colorArray) {
-      if (!Array.isArray(colorArray) || colorArray.length !== 10) {
-        throw new Error('mdColorPicker:setFavorites: colorArray needs to be an array with 10 colors.');
-      }
       if (typeof colorArray[0] === 'string' || colorArray[0] instanceof String) {
         favorites = colorArray.map(function (c) {
           return getColor(c);
@@ -61,6 +58,13 @@
       } else {
         favorites = colorArray;
       }
+      var chunkArray = [];
+      var slice = 0;
+      while(slice < favorites.length) {
+        chunkArray.push(favorites.slice(slice, slice + 10));
+        slice += 10;
+      }
+      favorites = chunkArray.reverse();
     }
 
     function getFavorites() {
@@ -124,7 +128,7 @@
           '  <md-menu-content class="md-cm">',
           '    <div></div>',
           '    <div class="md-cm-swatches" layout="row">',
-          '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
+          '      <div ng-if="vm.favorites" ng-class="{favorites: $last}" ng-repeat="colorRow in vm.favorites" ><div ng-repeat="color in colorRow track by $index" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
           '      <div ng-repeat="swatch in vm.colors" layout=column>',
           '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color); vm.panelRef.panel.close();" layout="row" layout-align="center center">',
           '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
@@ -173,7 +177,7 @@
         '  <md-menu-content class="md-cm">',
         '    <div></div>',
         '    <div class="md-cm-swatches" layout="row">',
-        '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
+        '      <div ng-if="vm.favorites" ng-repeat="colorRow in vm.favorites" ng-class="{favorites: $last}"><div ng-repeat="color in colorRow track by $index" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div></span>',
         '      <div ng-repeat="swatch in vm.colors" layout=column>',
         '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
         '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
