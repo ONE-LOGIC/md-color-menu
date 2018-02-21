@@ -187,6 +187,7 @@
     }
   }
 
+  mdColorMenuController['$inject'] = ['mdPickerColors'];
   function mdColorMenuController(mdPickerColors) {
     var vm = this;
 
