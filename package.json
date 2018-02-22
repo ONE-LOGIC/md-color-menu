@@ -1,8 +1,9 @@
 {
   "name": "md-color-menu",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Simple Angular Material Color Picker",
   "main": "md-color-menu.js",
+  "style": "md-color-menu.css",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ONE-LOGIC/md-color-menu.git"

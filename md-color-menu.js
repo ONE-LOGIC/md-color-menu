@@ -1,14 +1,5 @@
 (function() {
 
-  // Check for CommonJS support
-  if (typeof module === 'object' && module.exports) {
-    var angular = require('angular');
-    require("./md-color-menu.css");
-    module.exports = mdPickerColors;
-  } else {
-    angular = window.angular;
-  }
-
   angular
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
     .factory('mdPickerColors', ['$mdColorPalette', '$mdPanel', mdPickerColors])
@@ -196,6 +187,7 @@
     }
   }
 
+  mdColorMenuController['$inject'] = ['mdPickerColors'];
   function mdColorMenuController(mdPickerColors) {
     var vm = this;
 
@@ -214,4 +206,7 @@
     }
   }
 
+  if (typeof module === 'object' && module.exports) {
+	  module.exports = angular.module('mdColorMenu').name;
+  }
 })();
