@@ -1,10 +1,8 @@
 (function() {
-
   angular
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
     .factory('mdPickerColors', ['$mdColorPalette', '$mdPanel', mdPickerColors])
     .directive('mdColorMenu', mdColorMenuDirective);
-
   function mdPickerColors($mdColorPalette, $mdPanel) {
     var service = {
       colors: [],
@@ -13,10 +11,8 @@
       getFavorites: getFavorites,
       openColorPicker: openColorPicker
     };
-
     var hexToColor = {};
     var favorites = [];
-
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
       angular.forEach(swatch, function(color, colorName) {
@@ -32,7 +28,6 @@
       });
       service.colors.push(swatchColors);
     });
-
     return service;
 
     function getColor(hex) {
@@ -42,7 +37,7 @@
           name: hex,
           hex: hex,
           style: {
-            'color': "rgba(0,0,0,0.87)",
+            'color': getFontColor(hex),
             'background-color': hexToRgb(hex)
           }
         };
@@ -50,21 +45,34 @@
       return colorObj;
     }
 
+    function getFontColor(hex) {
+      const rgb = hexToRgb(hex, true);
+      return (rgb[0] + rgb[1] + rgb[2]) / 3 > 127 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)';
+    }
+
     function setFavorites(colorArray) {
+      if (!Array.isArray(colorArray)) {
+        throw new Error('mdColorPicker:setFavorites: Favorite colors need to be an Array.');
+      }
       if (typeof colorArray[0] === 'string' || colorArray[0] instanceof String) {
-        favorites = colorArray.map(function (c) {
+        favorites = [colorArray.map(function (c) {
           return getColor(c);
+        })];
+      } else if (Array.isArray(colorArray[0])) {
+        favorites = colorArray;
+        favorites.forEach((color, index, fullColor) => {
+          if (color.length !== 10) {
+            throw new Error('mdColorPicker:setFavorites: color needs to be an array with 10 colors.');
+          }
+          if (typeof color[0] === 'string' || color[0] instanceof String) {
+            fullColor[index] = color.map(function (c) {
+              return getColor(c);
+            });
+          }
         });
       } else {
-        favorites = colorArray;
+        favorites = [colorArray];
       }
-      var chunkArray = [];
-      var slice = 0;
-      while(slice < favorites.length) {
-        chunkArray.push(favorites.slice(slice, slice + 10));
-        slice += 10;
-      }
-      favorites = chunkArray.reverse();
     }
 
     function getFavorites() {
@@ -75,15 +83,18 @@
       return colorName[0] === 'A';
     }
 
-    function hexToRgb(hex) {
+    function hexToRgb(hex, returnAsArray) {
       // Expand shorthand form (e.g. "04F") to full form (e.g. "0044FF")
       var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
       hex = hex.replace(shorthandRegex, function(m, r, g, b) {
         return r + r + g + g + b + b;
       });
-
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')' : null;
+      if (!result) {
+        return null;
+      }
+
+      return returnAsArray ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')';
     }
 
     function isBlack(colorName) {
@@ -110,16 +121,13 @@
     }
 
     function openColorPicker(ev, colorSelectedCallback) {
-
       var panelRef = { panel: null };
-
       var position = $mdPanel.newPanelPosition()
         .relativeTo(ev.srcElement)
         .addPanelPosition(
           $mdPanel.xPosition.ALIGN_START,
           $mdPanel.yPosition.BELOW
         );
-
       var config = {
         attachTo: angular.element(document.body),
         controller: angular.noop,
@@ -128,10 +136,15 @@
           '  <md-menu-content class="md-cm">',
           '    <div></div>',
           '    <div class="md-cm-swatches" layout="row">',
-          '      <div ng-if="vm.favorites" ng-class="{favorites: $last}" ng-repeat="colorRow in vm.favorites" ><div ng-repeat="color in colorRow track by $index" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
-          '      <div ng-repeat="swatch in vm.colors" layout=column>',
+          '      <div ng-if="vm.favorites" ng-repeat="fColor in vm.favorites" layout="column" class="favorites">',
+          '       <div ng-repeat="color in fColor" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
+          '         <span ng-if="color.name == vm.color.name">&#10004;</span>',
+          '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
+          '         </div></div>',
+          '      <div ng-repeat="swatch in vm.colors" layout="column">',
           '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color); vm.panelRef.panel.close();" layout="row" layout-align="center center">',
           '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
+          '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
           '        </div>',
           '      </div>',
           '    </div>',
@@ -153,7 +166,6 @@
         zIndex: 99,
         groupName: 'menus'
       };
-
       $mdPanel.open(config).then(function(result) {
         panelRef.panel = result;
       });
@@ -177,7 +189,11 @@
         '  <md-menu-content class="md-cm">',
         '    <div></div>',
         '    <div class="md-cm-swatches" layout="row">',
-        '      <div ng-if="vm.favorites" ng-repeat="colorRow in vm.favorites" ng-class="{favorites: $last}"><div ng-repeat="color in colorRow track by $index" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div></span>',
+        '      <div ng-if="vm.favorites" ng-repeat="fColor in vm.favorites" layout="column" ng-class="{\'favorites\':$last}">',
+        '        <div ng-repeat="color in fColor" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
+        '         <span ng-if="color.name == vm.color.name">&#10004;</span>',
+        '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
+        '         </div></div>',
         '      <div ng-repeat="swatch in vm.colors" layout=column>',
         '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
         '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
@@ -191,22 +207,23 @@
     }
   }
 
+  mdColorMenuController['$inject'] = ['mdPickerColors'];
+
   function mdColorMenuController(mdPickerColors) {
     var vm = this;
-
     vm.showTooltips = vm.showTooltips || false;
     vm.openMenu = openMenu;
     vm.colors = mdPickerColors.colors;
     vm.selectColor = selectColor;
     vm.favorites = mdPickerColors.getFavorites();
-
     function openMenu($mdOpenMenu, $event) {
       $mdOpenMenu($event);
     }
-
     function selectColor(color) {
       vm.color = color;
     }
   }
-
+  if (typeof module === 'object' && module.exports) {
+    module.exports = angular.module('mdColorMenu').name;
+  }
 })();
