@@ -3,6 +3,7 @@
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
     .factory('mdPickerColors', ['$mdColorPalette', '$mdPanel', mdPickerColors])
     .directive('mdColorMenu', mdColorMenuDirective);
+
   function mdPickerColors($mdColorPalette, $mdPanel) {
     var service = {
       colors: [],
@@ -11,8 +12,10 @@
       getFavorites: getFavorites,
       openColorPicker: openColorPicker
     };
+
     var hexToColor = {};
     var favorites = [];
+
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
       angular.forEach(swatch, function(color, colorName) {
@@ -28,6 +31,7 @@
       });
       service.colors.push(swatchColors);
     });
+
     return service;
 
     function getColor(hex) {
@@ -121,13 +125,16 @@
     }
 
     function openColorPicker(ev, colorSelectedCallback) {
+
       var panelRef = { panel: null };
+
       var position = $mdPanel.newPanelPosition()
         .relativeTo(ev.srcElement)
         .addPanelPosition(
           $mdPanel.xPosition.ALIGN_START,
           $mdPanel.yPosition.BELOW
         );
+
       var config = {
         attachTo: angular.element(document.body),
         controller: angular.noop,
@@ -166,6 +173,7 @@
         zIndex: 99,
         groupName: 'menus'
       };
+
       $mdPanel.open(config).then(function(result) {
         panelRef.panel = result;
       });
@@ -207,23 +215,22 @@
     }
   }
 
-  mdColorMenuController['$inject'] = ['mdPickerColors'];
-
   function mdColorMenuController(mdPickerColors) {
     var vm = this;
+
     vm.showTooltips = vm.showTooltips || false;
     vm.openMenu = openMenu;
     vm.colors = mdPickerColors.colors;
     vm.selectColor = selectColor;
     vm.favorites = mdPickerColors.getFavorites();
+
     function openMenu($mdOpenMenu, $event) {
       $mdOpenMenu($event);
     }
+
     function selectColor(color) {
       vm.color = color;
     }
   }
-  if (typeof module === 'object' && module.exports) {
-    module.exports = angular.module('mdColorMenu').name;
-  }
+
 })();
