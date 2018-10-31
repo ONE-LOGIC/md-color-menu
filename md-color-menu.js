@@ -16,9 +16,6 @@
     var hexToColor = {};
     var favorites = [];
 
-    $mdColorPalette['grey'][50].value = [255,255,255];
-    $mdColorPalette['grey'][50].hex = '#ffffff';
-
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
       angular.forEach(swatch, function(color, colorName) {
