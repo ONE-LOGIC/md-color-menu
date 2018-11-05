@@ -1,5 +1,4 @@
 (function() {
-
   angular
     .module('mdColorMenu', ['ngAria', 'ngAnimate', 'ngMaterial'])
     .factory('mdPickerColors', ['$mdColorPalette', '$mdPanel', mdPickerColors])
@@ -16,9 +15,6 @@
 
     var hexToColor = {};
     var favorites = [];
-
-    $mdColorPalette['grey'][50].value = [255,255,255];
-    $mdColorPalette['grey'][50].hex = '#ffffff';
 
     angular.forEach($mdColorPalette, function(swatch, swatchName) {
       var swatchColors = [];
@@ -45,7 +41,7 @@
           name: hex,
           hex: hex,
           style: {
-            'color': "rgba(0,0,0,0.87)",
+            'color': getFontColor(hex),
             'background-color': hexToRgb(hex)
           }
         };
@@ -53,16 +49,33 @@
       return colorObj;
     }
 
+    function getFontColor(hex) {
+      const rgb = hexToRgb(hex, true);
+      return (rgb[0] + rgb[1] + rgb[2]) / 3 > 127 ? 'rgba(0, 0, 0, 0.87)' : 'rgba(255, 255, 255, 0.87)';
+    }
+
     function setFavorites(colorArray) {
-      if (!Array.isArray(colorArray) || colorArray.length !== 10) {
-        throw new Error('mdColorPicker:setFavorites: colorArray needs to be an array with 10 colors.');
+      if (!Array.isArray(colorArray)) {
+        throw new Error('mdColorPicker:setFavorites: Favorite colors need to be an Array.');
       }
       if (typeof colorArray[0] === 'string' || colorArray[0] instanceof String) {
-        favorites = colorArray.map(function (c) {
+        favorites = [colorArray.map(function (c) {
           return getColor(c);
+        })];
+      } else if (Array.isArray(colorArray[0])) {
+        favorites = colorArray;
+        favorites.forEach((color, index, fullColor) => {
+          if (color.length !== 10) {
+            throw new Error('mdColorPicker:setFavorites: color needs to be an array with 10 colors.');
+          }
+          if (typeof color[0] === 'string' || color[0] instanceof String) {
+            fullColor[index] = color.map(function (c) {
+              return getColor(c);
+            });
+          }
         });
       } else {
-        favorites = colorArray;
+        favorites = [colorArray];
       }
     }
 
@@ -74,15 +87,18 @@
       return colorName[0] === 'A';
     }
 
-    function hexToRgb(hex) {
+    function hexToRgb(hex, returnAsArray) {
       // Expand shorthand form (e.g. "04F") to full form (e.g. "0044FF")
       var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
       hex = hex.replace(shorthandRegex, function(m, r, g, b) {
         return r + r + g + g + b + b;
       });
-
       var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-      return result ? 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')' : null;
+      if (!result) {
+        return null;
+      }
+
+      return returnAsArray ? [parseInt(result[1], 16), parseInt(result[2], 16), parseInt(result[3], 16)] : 'rgb(' + parseInt(result[1], 16) + ',' + parseInt(result[2], 16) + ',' + parseInt(result[3], 16) + ')';
     }
 
     function isBlack(colorName) {
@@ -127,10 +143,15 @@
           '  <md-menu-content class="md-cm">',
           '    <div></div>',
           '    <div class="md-cm-swatches" layout="row">',
-          '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
-          '      <div ng-repeat="swatch in vm.colors" layout=column>',
+          '      <div ng-if="vm.favorites" ng-repeat="fColor in vm.favorites" layout="column" class="favorites">',
+          '       <div ng-repeat="color in fColor" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
+          '         <span ng-if="color.name == vm.color.name">&#10004;</span>',
+          '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
+          '         </div></div>',
+          '      <div ng-repeat="swatch in vm.colors" layout="column">',
           '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color); vm.panelRef.panel.close();" layout="row" layout-align="center center">',
           '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
+          '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
           '        </div>',
           '      </div>',
           '    </div>',
@@ -176,7 +197,11 @@
         '  <md-menu-content class="md-cm">',
         '    <div></div>',
         '    <div class="md-cm-swatches" layout="row">',
-        '      <div ng-if="vm.favorites && vm.favorites.length === 10" class="favorites"><div ng-repeat="color in vm.favorites" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center"></div></div>',
+        '      <div ng-if="vm.favorites" ng-repeat="fColor in vm.favorites" layout="column" ng-class="{\'favorites\':$last}">',
+        '        <div ng-repeat="color in fColor" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
+        '         <span ng-if="color.name == vm.color.name">&#10004;</span>',
+        '         <md-tooltip ng-if="vm.showTooltips">{{color.name}}</md-tooltip>',
+        '         </div></div>',
         '      <div ng-repeat="swatch in vm.colors" layout=column>',
         '        <div ng-repeat="color in swatch" class="md-cm-color" ng-style="color.style" ng-click="vm.selectColor(color)" layout="row" layout-align="center center">',
         '          <span ng-if="color.name == vm.color.name">&#10004;</span>',
