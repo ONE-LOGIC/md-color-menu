@@ -1,6 +1,6 @@
 {
   "name": "md-color-menu",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "Simple Angular Material Color Picker",
   "main": "md-color-menu.js",
   "style": "md-color-menu.css",

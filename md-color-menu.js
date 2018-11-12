@@ -64,7 +64,7 @@
         })];
       } else if (Array.isArray(colorArray[0])) {
         favorites = colorArray;
-        favorites.forEach((color, index, fullColor) => {
+        favorites.forEach(function(color, index, fullColor) {
           if (color.length !== 10) {
             throw new Error('mdColorPicker:setFavorites: color needs to be an array with 10 colors.');
           }
